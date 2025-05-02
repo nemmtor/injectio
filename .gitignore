@@ -1,0 +1,6 @@
+node_modules
+coverage
+.turbo
+.vercel
+.DS_Store
+dist

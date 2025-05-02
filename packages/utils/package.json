@@ -1,0 +1,22 @@
+{
+  "name": "@injectio/utils",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest --watch"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@injectio/eslint-config": "workspace:*",
+    "@injectio/typescript-config": "workspace:*",
+    "@types/node": "^22.15.21",
+    "eslint": "^9.27.0",
+    "typescript": "5.8.3"
+  }
+}

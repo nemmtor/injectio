@@ -1,0 +1,33 @@
+{
+  "name": "injectio",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test:workspace": "turbo run test",
+    "test:workspace:watch": "vitest --watch",
+    "check-types": "turbo run check-types",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@injectio/eslint-config": "workspace:*",
+    "@manypkg/cli": "^0.24.0",
+    "@vitest/coverage-v8": "3.1.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "typescript": "5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

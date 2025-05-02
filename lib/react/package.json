@@ -1,0 +1,64 @@
+{
+  "name": "@injectio/react",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "A lightweight library that empowers you to summon React components on demand with a simple function call.",
+  "keywords": [
+    "react",
+    "inject",
+    "headless",
+    "modal",
+    "toast",
+    "drawer",
+    "overlay",
+    "portal",
+    "render",
+    "ui",
+    "observer",
+    "global",
+    "workflow",
+    "declarative",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemmtor/injectio"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "build": "tsc -b && vite build"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@injectio/eslint-config": "workspace:*",
+    "@injectio/typescript-config": "workspace:*",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.27.0",
+    "jsdom": "^26.1.0",
+    "react": "^19.1.0",
+    "typescript": "5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "dependencies": {
+    "@injectio/utils": "workspace:*",
+    "uuid": "^11.1.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}
