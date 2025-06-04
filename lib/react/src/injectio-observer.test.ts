@@ -15,9 +15,9 @@ describe('injectio observer', () => {
     const injectioObserver = InjectioObserver.getInstance();
 
     injectioObserver.add(vi.fn());
-    const snapshotAfter = injectioObserver.getSnapshot();
+    const snapshot = injectioObserver.getSnapshot();
 
-    expect(snapshotAfter).toHaveLength(1);
+    expect(snapshot).toHaveLength(1);
   });
 
   it('should update snapshot reference after injected calls onSync', () => {
@@ -42,5 +42,29 @@ describe('injectio observer', () => {
     const snapshotAfterSync = injectioObserver.getSnapshot();
 
     expect(snapshotBeforeSync).not.toBe(snapshotAfterSync);
+  });
+
+  it('should not add another item with same id', () => {
+    const injectioObserver = InjectioObserver.getInstance();
+    const item = vi.fn();
+
+    injectioObserver.add(item, 'id');
+    injectioObserver.add(item, 'id');
+    const snapshot = injectioObserver.getSnapshot();
+
+    expect(snapshot).toHaveLength(1);
+  });
+
+  it('should restart promise after adding item with same id', () => {
+    const injectioObserver = InjectioObserver.getInstance();
+    const item = vi.fn();
+
+    const firstInjection = injectioObserver.add(item, 'id');
+    firstInjection.resolve('resolved');
+    const firstInjectionValue = firstInjection.value;
+    const secondInjection = injectioObserver.add(item, 'id');
+    const secondInjectionValue = secondInjection.value;
+
+    expect(firstInjectionValue).not.toBe(secondInjectionValue);
   });
 });

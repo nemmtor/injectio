@@ -1,10 +1,10 @@
 import { noop } from './noop';
-export class DeferredPromise<Resolved> {
-  private resolvePromise: (value: Resolved) => void = noop;
-  private _promise: Promise<Resolved>;
+export class DeferredPromise<ResolvedValue> {
+  private resolvePromise: (value: ResolvedValue) => void = noop;
+  private _promise: Promise<ResolvedValue>;
 
   private constructor() {
-    this._promise = new Promise<Resolved>((resolve) => {
+    this._promise = new Promise<ResolvedValue>((resolve) => {
       this.resolvePromise = resolve;
     });
   }
@@ -13,7 +13,7 @@ export class DeferredPromise<Resolved> {
     return new DeferredPromise<Resolved>();
   }
 
-  public resolve(value: Resolved) {
+  public resolve(value: ResolvedValue) {
     this.resolvePromise(value);
   }
 

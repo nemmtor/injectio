@@ -11,6 +11,7 @@ export const Injectio = () => {
         dismiss: item.dismiss,
         dismissed: item.dismissed,
         remove: item.remove,
+        resolve: item.resolve,
       })}
     </Fragment>
   ));

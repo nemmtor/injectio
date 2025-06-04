@@ -22,10 +22,13 @@ const ExampleDrawer = memo((drawerProps: DrawerProps) => {
 ExampleDrawer.displayName = 'ExampleDrawer';
 
 export const injectExampleDrawer = () =>
-  inject(({ dismissed, dismiss, remove }) => (
+  inject(({ dismissed, dismiss, resolve, remove }) => (
     <ExampleDrawer
       isOpened={!dismissed}
-      onClose={dismiss}
+      onClose={() => {
+        resolve(undefined);
+        dismiss();
+      }}
       onCloseAnimationFinished={remove}
     />
   ));

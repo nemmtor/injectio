@@ -2,26 +2,42 @@ import { v4 } from 'uuid';
 
 import { RenderFn } from './types';
 
-type ConstructorArgs = {
-  renderFn: RenderFn;
+type ConstructorArgs<ResolvedValue> = {
+  id?: string;
+  renderFn: RenderFn<ResolvedValue>;
   onDismiss: VoidFunction;
   onRemove: (id: string) => void;
+  onResolve: (value: ResolvedValue) => void;
 };
 
-export class Injected {
-  private _id: string;
-  private _renderFn: RenderFn;
-  private _dismissed = false;
-  private onDismiss: VoidFunction;
-  private onRemove: (id: string) => void;
+type OverrideArgs<ResolvedValue> = Pick<
+  ConstructorArgs<ResolvedValue>,
+  'onResolve'
+>;
 
-  constructor({ renderFn, onDismiss, onRemove }: ConstructorArgs) {
-    this._id = v4();
+export class Injected<ResolvedValue> {
+  private _id: string;
+  private _renderFn: RenderFn<ResolvedValue>;
+  private _dismissed = false;
+  private onDismiss: () => void;
+  private onRemove: (id: string) => void;
+  private onResolve: (value: ResolvedValue) => void;
+
+  constructor({
+    id,
+    renderFn,
+    onDismiss,
+    onRemove,
+    onResolve,
+  }: ConstructorArgs<ResolvedValue>) {
+    this._id = id ?? v4();
     this._renderFn = renderFn;
     this.onDismiss = onDismiss;
     this.onRemove = onRemove;
+    this.onResolve = onResolve;
     this.dismiss = this.dismiss.bind(this);
     this.remove = this.remove.bind(this);
+    this.resolve = this.resolve.bind(this);
   }
 
   public get id() {
@@ -43,5 +59,13 @@ export class Injected {
 
   public remove() {
     this.onRemove(this.id);
+  }
+
+  public resolve(value: ResolvedValue) {
+    this.onResolve(value);
+  }
+
+  public override({ onResolve }: OverrideArgs<ResolvedValue>) {
+    this.onResolve = onResolve;
   }
 }

@@ -1,12 +1,15 @@
+import { DeferredPromise } from '@injectio/utils';
+
 import { Injected } from './injected';
 import { RenderFn } from './types';
 
 type Subscriber = VoidFunction;
 
 export class InjectioObserver {
-  private static instance: InjectioObserver | undefined;
+  private static instance?: InjectioObserver;
   private subscribers: Subscriber[] = [];
-  private injectedItems: Injected[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private injectedItems: Injected<any>[] = [];
 
   private constructor() {
     this.getSnapshot = this.getSnapshot.bind(this);
@@ -37,18 +40,45 @@ export class InjectioObserver {
     };
   }
 
-  public getSnapshot(): readonly Injected[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public getSnapshot(): readonly Injected<any>[] {
     return this.injectedItems;
   }
 
-  public add(renderFn: RenderFn) {
-    const injected = new Injected({
-      renderFn,
-      onDismiss: this.notifySubscribers,
-      onRemove: this.remove,
+  public add<ResolvedValue>(renderFn: RenderFn<ResolvedValue>, id?: string) {
+    const valueDeferredPromise = DeferredPromise.make<ResolvedValue>();
+
+    const foundInjected = this.injectedItems.find(
+      (injected) => injected.id === id
+    );
+    foundInjected?.override({
+      onResolve: (value: unknown) =>
+        valueDeferredPromise.resolve(value as ResolvedValue),
     });
-    this.injectedItems = [...this.injectedItems, injected];
-    this.notifySubscribers();
+
+    const injected =
+      foundInjected ??
+      new Injected({
+        id,
+        renderFn,
+        onDismiss: () => {
+          this.notifySubscribers();
+        },
+        onRemove: this.remove,
+        onResolve: (value: unknown) =>
+          valueDeferredPromise.resolve(value as ResolvedValue),
+      });
+
+    if (!foundInjected) {
+      this.injectedItems = [...this.injectedItems, injected];
+      this.notifySubscribers();
+    }
+
+    return {
+      value: valueDeferredPromise.promise,
+      dismiss: injected.dismiss,
+      resolve: injected.resolve,
+    };
   }
 
   private remove(id: string) {

@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 
 import { Injectio } from './injectio';
@@ -45,6 +45,58 @@ describe('injectio', () => {
     const removeButtonAfter = screen.queryByText('remove');
 
     expect(removeButtonAfter).not.toBeInTheDocument();
+  });
+
+  it('should allow to resolve with a value', async () => {
+    const user = userEvent.setup();
+    render(<></>, { wrapper });
+
+    let value = '';
+    act(() => {
+      const result = inject(({ resolve }) => (
+        <button onClick={() => resolve('value')}>dismiss</button>
+      ));
+      result.value.then((resultValue) => {
+        value = resultValue as string;
+      });
+    });
+    const dismissButton = screen.getByText('dismiss');
+    await user.click(dismissButton);
+
+    expect(value).toBe('value');
+  });
+
+  it('should allow to resolve from caller code', async () => {
+    render(<></>, { wrapper });
+
+    let value = '';
+    act(() => {
+      const result = inject(() => <div>Hello World</div>);
+      result.value.then((resultValue) => {
+        value = resultValue as string;
+      });
+      result.resolve('value');
+    });
+
+    await waitFor(() => {
+      expect(value).toBe('value');
+    });
+  });
+
+  it('should allow to dismiss from caller code', async () => {
+    render(<></>, { wrapper });
+
+    act(() => {
+      const result = inject(({ dismissed }) =>
+        dismissed ? null : <div>Hello World</div>
+      );
+      result.dismiss();
+    });
+    const injectedComponent = screen.queryByText('Hello World');
+
+    await waitFor(() => {
+      expect(injectedComponent).not.toBeInTheDocument();
+    });
   });
 });
 

@@ -6,6 +6,7 @@ describe('injected', () => {
       onDismiss: vi.fn(),
       renderFn: vi.fn(),
       onRemove: vi.fn(),
+      onResolve: vi.fn(),
     });
 
     injected.dismiss();
@@ -19,6 +20,7 @@ describe('injected', () => {
       onDismiss: dismissSpy,
       renderFn: vi.fn(),
       onRemove: vi.fn(),
+      onResolve: vi.fn(),
     });
 
     injected.dismiss();
@@ -33,6 +35,7 @@ describe('injected', () => {
       onDismiss: dismissSpy,
       renderFn: vi.fn(),
       onRemove: vi.fn(),
+      onResolve: vi.fn(),
     });
 
     expect(dismissSpy).not.toHaveBeenCalled();

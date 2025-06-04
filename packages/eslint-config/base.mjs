@@ -1,3 +1,4 @@
+// @ts-check
 import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import { config, configs } from 'typescript-eslint';
@@ -58,12 +59,12 @@ export const baseConfig = config(
       'vitest/prefer-expect-assertions': 'off',
       'vitest/require-mock-type-parameters': 'off',
       'vitest/prefer-called-with': 'off',
-      'vitest/prefer-describe-function-title': 'off'
+      'vitest/prefer-describe-function-title': 'off',
     },
     languageOptions: {
       globals: {
         ...vitestPlugin.environments.env.globals,
       },
-    }
+    },
   }
 );
