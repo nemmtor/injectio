@@ -8,8 +8,7 @@ export const Injectio = () => {
   return injectedItems.map((item) => (
     <Fragment key={item.id}>
       {item.renderFn({
-        dismiss: item.dismiss,
-        dismissed: item.dismissed,
+        props: item.props,
         remove: item.remove,
         resolve: item.resolve,
       })}

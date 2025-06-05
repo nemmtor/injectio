@@ -1,43 +1,52 @@
 import { Injected } from './injected';
 
+type TestProps = { visible: boolean };
+
 describe('injected', () => {
-  it('should be dismissable', () => {
-    const injected = new Injected({
-      onDismiss: vi.fn(),
+  it('should update props and call onPropsUpdate', () => {
+    const propsUpdateSpy = vi.fn();
+    const injected = new Injected<TestProps, void>({
+      initialProps: { visible: true },
+      onPropsUpdate: propsUpdateSpy,
       renderFn: vi.fn(),
       onRemove: vi.fn(),
       onResolve: vi.fn(),
     });
 
-    injected.dismiss();
+    injected.updateProps((currentProps) => ({ ...currentProps, visible: false }));
 
-    expect(injected.dismissed).toBe(true);
+    expect(injected.props.visible).toBe(false);
+    expect(propsUpdateSpy).toHaveBeenCalled();
   });
 
-  it('should call onSync after dismissing', () => {
-    const dismissSpy = vi.fn();
-    const injected = new Injected({
-      onDismiss: dismissSpy,
+  it('should call onRemove with correct id', () => {
+    const removeSpy = vi.fn();
+    const injected = new Injected<TestProps, void>({
+      id: 'test-id',
+      initialProps: { visible: true },
+      onPropsUpdate: vi.fn(),
       renderFn: vi.fn(),
-      onRemove: vi.fn(),
+      onRemove: removeSpy,
       onResolve: vi.fn(),
     });
 
-    injected.dismiss();
+    injected.remove();
 
-    expect(dismissSpy).toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalledWith('test-id');
   });
 
-  it('should not call onSync if not dismissing', () => {
-    const dismissSpy = vi.fn();
-
-    new Injected({
-      onDismiss: dismissSpy,
+  it('should call onResolve with correct value', () => {
+    const resolveSpy = vi.fn();
+    const injected = new Injected<TestProps, string>({
+      initialProps: { visible: true },
+      onPropsUpdate: vi.fn(),
       renderFn: vi.fn(),
       onRemove: vi.fn(),
-      onResolve: vi.fn(),
+      onResolve: resolveSpy,
     });
 
-    expect(dismissSpy).not.toHaveBeenCalled();
+    injected.resolve('test-value');
+
+    expect(resolveSpy).toHaveBeenCalledWith('test-value');
   });
 });
