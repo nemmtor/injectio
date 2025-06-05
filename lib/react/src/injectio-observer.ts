@@ -1,7 +1,7 @@
 import { DeferredPromise } from '@injectio/utils';
 
 import { Injected } from './injected';
-import { RenderFn } from './types';
+import { RenderFn, UpdatePropsFn } from './types';
 
 type Subscriber = VoidFunction;
 
@@ -9,7 +9,7 @@ export class InjectioObserver {
   private static instance?: InjectioObserver;
   private subscribers: Subscriber[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private injectedItems: Injected<any>[] = [];
+  private injectedItems: Injected<any, any>[] = [];
 
   private constructor() {
     this.getSnapshot = this.getSnapshot.bind(this);
@@ -41,11 +41,15 @@ export class InjectioObserver {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public getSnapshot(): readonly Injected<any>[] {
+  public getSnapshot(): readonly Injected<any, any>[] {
     return this.injectedItems;
   }
 
-  public add<ResolvedValue>(renderFn: RenderFn<ResolvedValue>, id?: string) {
+  public add<TProps, ResolvedValue>(
+    renderFn: RenderFn<TProps, ResolvedValue>,
+    initialProps: TProps,
+    id?: string
+  ) {
     const valueDeferredPromise = DeferredPromise.make<ResolvedValue>();
 
     const foundInjected = this.injectedItems.find(
@@ -61,7 +65,8 @@ export class InjectioObserver {
       new Injected({
         id,
         renderFn,
-        onDismiss: () => {
+        initialProps,
+        onPropsUpdate: () => {
           this.notifySubscribers();
         },
         onRemove: this.remove,
@@ -74,9 +79,13 @@ export class InjectioObserver {
       this.notifySubscribers();
     }
 
+    const updateProps: UpdatePropsFn<TProps> = (updater) => {
+      injected.updateProps(updater);
+    };
+
     return {
       value: valueDeferredPromise.promise,
-      dismiss: injected.dismiss,
+      updateProps,
       resolve: injected.resolve,
     };
   }

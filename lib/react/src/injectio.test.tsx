@@ -5,26 +5,32 @@ import { ReactNode } from 'react';
 import { Injectio } from './injectio';
 import { inject } from './inject';
 
+type ModalProps = { visible: boolean };
+
 describe('injectio', () => {
   it('should allow to summon a component', async () => {
     render(<></>, { wrapper });
 
     act(() => {
-      inject(() => <div>hello world</div>);
+      inject(() => <div>hello world</div>, { visible: true });
     });
     const helloWorld = screen.getByText('hello world');
 
     expect(helloWorld).toBeVisible();
   });
 
-  it('should allow to dismiss injected component', async () => {
+  it('should allow to update props to hide component', async () => {
     const user = userEvent.setup();
     render(<></>, { wrapper });
 
+    let updateProps: ((updater: (props: ModalProps) => ModalProps) => void) | undefined;
     act(() => {
-      inject(({ dismissed, dismiss }) =>
-        dismissed ? null : <button onClick={dismiss}>dismiss</button>
+      const result = inject(
+        ({ props }) =>
+          props.visible ? <button onClick={() => updateProps?.((p) => ({ ...p, visible: false }))}>dismiss</button> : null,
+        { visible: true }
       );
+      updateProps = result.updateProps;
     });
     const dismissButtonBefore = screen.getByText('dismiss');
     await user.click(dismissButtonBefore);
@@ -38,7 +44,7 @@ describe('injectio', () => {
     render(<></>, { wrapper });
 
     act(() => {
-      inject(({ remove }) => <button onClick={remove}>remove</button>);
+      inject(({ remove }) => <button onClick={remove}>remove</button>, { visible: true });
     });
     const removeButtonBefore = screen.getByText('remove');
     await user.click(removeButtonBefore);
@@ -53,11 +59,14 @@ describe('injectio', () => {
 
     let value = '';
     act(() => {
-      const result = inject(({ resolve }) => (
-        <button onClick={() => resolve('value')}>dismiss</button>
-      ));
+      const result = inject<ModalProps, string>(
+        ({ resolve }) => (
+          <button onClick={() => resolve('value')}>dismiss</button>
+        ),
+        { visible: true }
+      );
       result.value.then((resultValue) => {
-        value = resultValue as string;
+        value = resultValue;
       });
     });
     const dismissButton = screen.getByText('dismiss');
@@ -71,9 +80,9 @@ describe('injectio', () => {
 
     let value = '';
     act(() => {
-      const result = inject(() => <div>Hello World</div>);
+      const result = inject<ModalProps, string>(() => <div>Hello World</div>, { visible: true });
       result.value.then((resultValue) => {
-        value = resultValue as string;
+        value = resultValue;
       });
       result.resolve('value');
     });
@@ -83,14 +92,15 @@ describe('injectio', () => {
     });
   });
 
-  it('should allow to dismiss from caller code', async () => {
+  it('should allow to update props from caller code', async () => {
     render(<></>, { wrapper });
 
     act(() => {
-      const result = inject(({ dismissed }) =>
-        dismissed ? null : <div>Hello World</div>
+      const result = inject(
+        ({ props }) => (props.visible ? <div>Hello World</div> : null),
+        { visible: true }
       );
-      result.dismiss();
+      result.updateProps((props) => ({ ...props, visible: false }));
     });
     const injectedComponent = screen.queryByText('Hello World');
 

@@ -1,4 +1,4 @@
-import { inject } from '@injectio/react';
+import { inject, UpdatePropsFn } from '@injectio/react';
 import { memo } from 'react';
 
 import { Drawer, DrawerProps } from './drawer';
@@ -21,14 +21,23 @@ const ExampleDrawer = memo((drawerProps: DrawerProps) => {
 });
 ExampleDrawer.displayName = 'ExampleDrawer';
 
-export const injectExampleDrawer = () =>
-  inject(({ dismissed, dismiss, resolve, remove }) => (
-    <ExampleDrawer
-      isOpened={!dismissed}
-      onClose={() => {
-        resolve(undefined);
-        dismiss();
-      }}
-      onCloseAnimationFinished={remove}
-    />
-  ));
+type ExampleDrawerProps = {
+  isOpened: boolean;
+};
+
+export const injectExampleDrawer = (): { updateProps: UpdatePropsFn<ExampleDrawerProps> } => {
+  const { updateProps } = inject<ExampleDrawerProps, void>(
+    ({ props, resolve, remove }) => (
+      <ExampleDrawer
+        isOpened={props.isOpened}
+        onClose={() => {
+          resolve(undefined);
+          updateProps((p) => ({ ...p, isOpened: false }));
+        }}
+        onCloseAnimationFinished={remove}
+      />
+    ),
+    { isOpened: true }
+  );
+  return { updateProps };
+};

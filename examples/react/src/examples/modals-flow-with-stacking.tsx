@@ -2,6 +2,10 @@ import { Button } from '../components/button';
 
 import { injectCounterModal } from './counter-modal';
 
+type CounterModalProps = {
+  isOpened: boolean;
+};
+
 const start = async () => {
   const modal1 = injectCounterModal({ id: 'modal1' });
   const modal1Value = await modal1.value;
@@ -12,9 +16,9 @@ const start = async () => {
   }
 
   const modal2 = injectCounterModal({
-    onSubmit: ({ dismiss }) => {
-      dismiss();
-      modal1.dismiss();
+    onSubmit: ({ updateProps }) => {
+      updateProps((p) => ({ ...p, isOpened: false }));
+      modal1.updateProps((p: CounterModalProps) => ({ ...p, isOpened: false }));
     },
   });
   const modal2Value = await modal2.value;
