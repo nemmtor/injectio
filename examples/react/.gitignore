@@ -7,10 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-*.tsbuildinfo
-
 node_modules
-build
 dist
 dist-ssr
 *.local

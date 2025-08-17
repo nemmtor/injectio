@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "references": [
     {
-      "path": "packages/injectio-react"
+      "path": "tsconfig.src.json"
     }
   ]
 }
