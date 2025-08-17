@@ -44,7 +44,7 @@ const injectSomeDialog = () => inject<...>({
 });
 ```
 
-Now you can call `injectSomeDialog()` from anywhere in your app – event handlers, store, or any JavaScript code.
+Now you can call `injectSomeDialog()` from anywhere in your app – event handlers, store, effects or any JavaScript code.
 
 > [!TIP]
 > For better developer experience, consider attaching the inject function as a static method to your component:
@@ -276,6 +276,51 @@ const injectSomeDialog = () =>
   });
 ```
 
+## Usage with @effect-atom
+Injecting components can be yielded inside other effects which makes it
+easy to integrate with other effect libraries like `@effect-atom`:
+```tsx
+import { Atom, useAtomValue } from '@effect-atom/atom-react';
+import { inject } from '@injectio/react';
+import { Deferred, Effect } from 'effect';
+
+class Users extends Effect.Service<Users>()('app/Users', {
+  succeed: {
+    getAll: Effect.succeed([
+      { id: '1', name: 'Alice' },
+      { id: '2', name: 'Bob' },
+      { id: '3', name: 'Charlie' },
+    ]),
+  },
+}) {}
+
+const runtimeAtom = Atom.runtime(Users.Default);
+
+const selectedUserAtom = runtimeAtom.atom(
+  Effect.gen(function* () {
+    const users = yield* Users;
+    const allUsers = yield* users.getAll;
+    const { deferred } = yield* inject<{ id: string; name: string }>({
+      renderFn: ({ deferred }) => (
+        <SelectUserForm
+          users={allUsers}
+          onSelect={(user) =>
+            deferred.pipe(Deferred.succeed(user), Effect.runPromise)
+          }
+        />
+      ),
+      initialProps: {},
+    });
+
+    return yield* Deferred.await(deferred);
+  }).pipe(Effect.scoped),
+);
+
+export const useSelectedUser = () => {
+  return useAtomValue(selectedUserAtom);
+};
+```
+
 ## Recipes
 Here are some useful examples you can use with Injectio.
 
@@ -311,7 +356,7 @@ by using [Effect's concurrency](https://effect.website/docs/concurrency/basic-co
 
 ```tsx
 Effect.gen(function* () {
-  const injectedComponent = yield* inject();
+  const injectedComponent = yield* inject(...);
   const apiCallFiber = yield* Effect.fork(someApiCall);
   const apiResult = Fiber.join(apiCallFiber); // not yielded yet to not block code execution
 

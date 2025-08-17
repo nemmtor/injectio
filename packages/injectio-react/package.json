@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "author": "nemmtor",
+  "name": "@injectio/react",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "description": "Summon React components on demand",
+  "keywords": [
+    "react",
+    "effect",
+    "inject",
+    "injectio",
+    "headless",
+    "modal",
+    "toast",
+    "drawer",
+    "overlay",
+    "portal",
+    "render",
+    "ui",
+    "workflow",
+    "declarative",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemmtor/injectio.git"
+  },
+  "homepage": "https://github.com/nemmtor/injectio",
+  "scripts": {
+    "build": "pnpm build-esm && pnpm build-cjs && pnpm build-annotate && build-utils pack-v2",
+    "build-esm": "tsc -b tsconfig.build.json",
+    "build-cjs": "babel build/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir build/cjs --source-maps",
+    "build-annotate": "babel build --plugins annotate-pure-calls --out-dir build --source-maps"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "effect": "^3.17.7",
+    "react": "^19.1.1"
+  },
+  "peerDependencies": {
+    "effect": "^3.17.7",
+    "react": ">=18 <20"
+  }
+}
