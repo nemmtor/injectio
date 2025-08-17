@@ -1,11 +1,20 @@
 ![Injectio header](https://github.com/nemmtor/injectio/raw/main/media/header.png)
 # Summon React components on demand.
-Injectio lets you render React components from anywhere in your JavaScript code – not just from within other React components. Perfect for showing modals, forms, and dialogs programmatically.
+Injectio transforms React components into effect's.
+Injected components can also return value to the calling code.
+Perfect for showing modals, forms, and dialogs programmatically.
+
+It makes the component injectable from anywhere - other effects, [atoms](https://github.com/tim-smart/effect-atom), event handles, store or any JavaScript code.
 
 Built with [Effect](https://effect.website/).
+Inspired by [Nice Modal](https://www.npmjs.com/package/@ebay/nice-modal-react).
 
 ## Setup
 Install Injectio using your preferred package manager:
+
+> [!NOTE]
+> At this point package is not published on npm yet, if you wanna play with injectio, clone the repo.
+
 ```bash
 npm install @injectio/react
 yarn add @injectio/react
@@ -27,7 +36,7 @@ createRoot(root).render(
 Think of `<Injectio />` as a React Portal that renders your injected components.
 
 ## Basic usage
-Let's say you have a dialog component:
+Given any component:
 ```tsx
 export const SomeDialog = () => {
   return <Dialog open>...</Dialog>;
@@ -44,18 +53,13 @@ const injectSomeDialog = () => inject<...>({
 });
 ```
 
-Now you can call `injectSomeDialog()` from anywhere in your app – event handlers, store, effects or any JavaScript code.
-
-> [!TIP]
-> For better developer experience, consider attaching the inject function as a static method to your component:
-> SomeDialog.inject = () => inject<...>(...)
+You've now received ability to render this component programatically by executing returned effect via Effect runtime.
+```tsx
+injectSomeDialog.pipe(...)
+```
 
 ### Understanding Component Lifecycle
-The `inject` function returns an Effect that manages the component's lifecycle. The component stays rendered as long as the [Effect's scope](https://effect.website/docs/resource-management/scope/) remains active. When the scope ends, the component is automatically removed.
-
-> [!NOTE]
-> Components cannot be manually removed because this could leave the deferred in an incomplete state. If a component were removed without completing its deferred, the component would disappear but you could still interact with it (awaiting deferred, calling updateProps, etc.).
-
+Injected component stays mounted for as long as it's [scope](https://effect.website/docs/resource-management/scope/) lives.
 
 Here are some examples:
 
@@ -81,6 +85,15 @@ injectSomeDialog().pipe(
 );
 ```
 
+✅ **Correct usage** - Component stays visible while waiting for parent effect to finish:
+```tsx
+Effect.gen(function*(){
+  yield* injectSomeDialog();
+  const someService = yield* SomeService
+  yield* userService.foo
+}).pipe(Effect.scoped)
+```
+
 ❌ **Wrong usage** - The scope closes immediately, so the component disappears right away:
 ```tsx
 import { Effect } from 'effect';
@@ -88,27 +101,7 @@ import { Effect } from 'effect';
 injectSomeDialog().pipe(Effect.scoped, Effect.runPromise);
 ```
 
-### Simplified API
-
-If you want a simpler API that handles scope management automatically:
-
-```tsx
-import { Effect, Deferred } from 'effect';
-
-const injectSomeDialog = () =>
-  inject({
-    renderFn: () => <SomeDialog />,
-    // ...
-  }).pipe(
-    Effect.flatMap(({ deferred }) => Deferred.await(deferred)),
-    Effect.scoped,
-    Effect.runPromise,
-  );
-```
-
-However, this approach reduces flexibility. The more composable you keep your injection functions, the more use cases you can handle.
-
-## Working with Deferred Values
+## Returning values to the calling code
 
 The `inject` function returns an object that includes a [deferred](https://effect.website/docs/concurrency/deferred/) property. This deferred value allows your injected components to return data back to the calling code.
 
@@ -247,7 +240,7 @@ const injectSomeDialog = () =>
 > [!NOTE]
 > Currently, the default type of `P` is `Record<string, never>` which means you need to pass an empty object even if you don't want to inject any props. This might change in future versions to make `initialProps` optional.
 
-You can update these props by calling the `updateProps` function that comes from the inject function:
+You can update these props by calling the `updateProps` function that is returned from the inject function:
 ```tsx
 injectSomeDialog().pipe(
   Effect.tap(Effect.sleep(Duration.seconds(2))),
