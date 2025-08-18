@@ -13,7 +13,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "NodeNext",
-    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2024",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "types": [],
     "isolatedModules": true,
     "sourceMap": true,
@@ -36,9 +40,6 @@
     "module": "NodeNext",
     "incremental": true,
     "removeComments": false,
-    "paths": {
-      "@injectio/react/*": ["./packages/injectio-react/*.js"]
-    },
     "plugins": [
       {
         "name": "@effect/language-service"
