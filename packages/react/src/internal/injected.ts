@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import type { Deferred } from 'effect/Deferred';
+import type { ReactNode } from 'react';
 import { Observable, type Observer } from './observable.js';
 
 type RenderFnProps<A, E, P> = {

@@ -4,11 +4,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -26,12 +22,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@injectio/react": [
-        "../../packages/react/src"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@injectio/react": ["../../packages/react/src"],
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -39,7 +31,5 @@
       }
     ]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

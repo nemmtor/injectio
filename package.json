@@ -9,7 +9,11 @@
     "build": "tsc -b tsconfig.build.json && pnpm -r run build",
     "check": "tsc -b tsconfig.json",
     "test": "vitest",
-    "coverage": "vitest --coverage"
+    "coverage": "vitest --coverage",
+    "format": "biome format",
+    "format:fix": "biome format --write",
+    "lint": "biome format",
+    "lint:fix": "biome format --write"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",

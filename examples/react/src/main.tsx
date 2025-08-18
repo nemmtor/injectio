@@ -1,12 +1,12 @@
+import { Injectio } from '@injectio/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Injectio } from '@injectio/react';
 
 import { Toaster } from '@/components/ui/sonner';
 
 import './styles.css';
-import { App } from './app';
 import { RegistryProvider } from '@effect-atom/atom-react';
+import { App } from './app';
 
 const root = document.getElementById('root');
 if (!root) {

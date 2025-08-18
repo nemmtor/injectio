@@ -1,4 +1,4 @@
-import { useSyncExternalStore, createElement } from 'react';
+import { createElement, useSyncExternalStore } from 'react';
 import { Core } from './internal/core.js';
 import { InjectedComponent } from './internal/injected-component.js';
 

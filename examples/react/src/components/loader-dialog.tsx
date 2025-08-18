@@ -1,4 +1,6 @@
 import { inject } from '@injectio/react';
+import { Duration, Effect } from 'effect';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
-import { Button } from './ui/button';
-import { Duration, Effect } from 'effect';
 import { Spinner } from './ui/spinner';
 
 type Props = {

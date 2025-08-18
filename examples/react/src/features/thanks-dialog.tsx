@@ -1,15 +1,15 @@
+import { inject } from '@injectio/react';
+import { Deferred, Duration, Effect } from 'effect';
+import { addFinalizer } from 'effect/Effect';
+import { useCallback } from 'react';
+import { LuBadgeCheck } from 'react-icons/lu';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { LuBadgeCheck } from "react-icons/lu";
-import { Deferred, Duration, Effect } from "effect";
-import { addFinalizer } from "effect/Effect";
-import { useCallback } from "react";
-import { inject } from "@injectio/react";
+} from '@/components/ui/dialog';
 
 type Props = {
   open: boolean;
@@ -23,7 +23,7 @@ export const ThanksDialog = ({ open, onClose }: Props) => {
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   return (
@@ -40,7 +40,7 @@ export const ThanksDialog = ({ open, onClose }: Props) => {
   );
 };
 
-type InjectedProps = Pick<Props, "open">;
+type InjectedProps = Pick<Props, 'open'>;
 
 ThanksDialog.inject = () =>
   Effect.gen(function* () {
