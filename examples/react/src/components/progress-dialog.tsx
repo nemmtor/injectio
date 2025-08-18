@@ -1,3 +1,6 @@
+import { inject } from '@injectio/react';
+import { Duration, Effect } from 'effect';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogContent,
@@ -5,11 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Duration, Effect } from "effect";
-import { Progress } from "./ui/progress";
-import { inject } from "@injectio/react";
+} from './ui/dialog';
+import { Progress } from './ui/progress';
 
 type Props = {
   open: boolean;
@@ -48,12 +48,12 @@ export const ProgressDialog = ({
 
 type InjectedProps = Pick<
   Props,
-  "open" | "description" | "progress" | "onRetry"
+  'open' | 'description' | 'progress' | 'onRetry'
 >;
 
-type InjectArgs = Pick<Props, "title" | "progress" | "description" | "onRetry">;
+type InjectArgs = Pick<Props, 'title' | 'progress' | 'description' | 'onRetry'>;
 
-ProgressDialog.inject = <E = never,>({
+ProgressDialog.inject = <E = never>({
   title,
   description,
   progress,

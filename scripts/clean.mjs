@@ -1,5 +1,5 @@
-import * as Glob from 'glob';
 import * as Fs from 'node:fs';
+import * as Glob from 'glob';
 
 const files = ['.', ...Glob.sync('packages/*')];
 

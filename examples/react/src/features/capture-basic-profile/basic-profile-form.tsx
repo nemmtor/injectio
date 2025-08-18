@@ -1,3 +1,4 @@
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -7,7 +8,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
 
 export type BasicProfile = {
   firstName: string;

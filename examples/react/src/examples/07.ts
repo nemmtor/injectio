@@ -1,6 +1,6 @@
-import { LoaderDialog } from '@/components/loader-dialog';
 import { Atom } from '@effect-atom/atom-react';
 import { Duration, Effect } from 'effect';
+import { LoaderDialog } from '@/components/loader-dialog';
 
 class Users extends Effect.Service<Users>()('app/Users', {
   succeed: {

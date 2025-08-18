@@ -1,8 +1,8 @@
-import { ProgressDialog } from "@/components/progress-dialog";
-import type { BasicProfile } from "@/features/capture-basic-profile/basic-profile-form";
-import { CaptureBasicProfileDialog } from "@/features/capture-basic-profile/capture-basic-profile-dialog";
-import { ThanksDialog } from "@/features/thanks-dialog";
-import { Deferred, Duration, Effect, Fiber } from "effect";
+import { Deferred, Duration, Effect, Fiber } from 'effect';
+import { ProgressDialog } from '@/components/progress-dialog';
+import type { BasicProfile } from '@/features/capture-basic-profile/basic-profile-form';
+import { CaptureBasicProfileDialog } from '@/features/capture-basic-profile/capture-basic-profile-dialog';
+import { ThanksDialog } from '@/features/thanks-dialog';
 
 const someApiCall = Effect.promise(() => {
   return new Promise<void>((res) => {
@@ -19,7 +19,7 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
     });
 
     const apiCallFiber = yield* Effect.fork(
-      someApiCall.pipe(Effect.delay(Duration.seconds(20)))
+      someApiCall.pipe(Effect.delay(Duration.seconds(20))),
     );
     const apiResult = Fiber.join(apiCallFiber);
 
@@ -28,48 +28,48 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
         Effect.sync(() =>
           progressDialog.updateProps({
             progress: 15,
-          })
-        ).pipe(Effect.delay(Duration.millis(500)))
+          }),
+        ).pipe(Effect.delay(Duration.millis(500))),
       ),
       Effect.tap(() =>
         Effect.sync(() =>
           progressDialog.updateProps({
-            description: "Nearly there...",
+            description: 'Nearly there...',
             progress: 20,
-          })
-        ).pipe(Effect.delay(Duration.millis(500)))
+          }),
+        ).pipe(Effect.delay(Duration.millis(500))),
       ),
       Effect.tap(() =>
         Effect.sync(() =>
           progressDialog.updateProps({
             progress: 25,
-          })
-        ).pipe(Effect.delay(Duration.millis(500)))
+          }),
+        ).pipe(Effect.delay(Duration.millis(500))),
       ),
       Effect.tap(() =>
         Effect.sync(() =>
           progressDialog.updateProps({
             progress: 30,
-          })
-        ).pipe(Effect.delay(Duration.millis(500)))
+          }),
+        ).pipe(Effect.delay(Duration.millis(500))),
       ),
       Effect.tap(
         Effect.sync(() =>
           progressDialog.updateProps({
             description:
-              "Please hold on, it should take only few seconds more.",
+              'Please hold on, it should take only few seconds more.',
             progress: 40,
-          })
-        ).pipe(Effect.delay(Duration.seconds(2)))
+          }),
+        ).pipe(Effect.delay(Duration.seconds(2))),
       ),
       Effect.tap(
         Effect.sync(() =>
           progressDialog.updateProps({
             description: `Usually it doesn't take that long...`,
-          })
-        ).pipe(Effect.delay(Duration.seconds(3)))
+          }),
+        ).pipe(Effect.delay(Duration.seconds(3))),
       ),
-      Effect.flatMap(() => apiResult)
+      Effect.flatMap(() => apiResult),
     );
 
     return yield* Effect.raceFirst(apiResult, slowPath);
@@ -79,7 +79,7 @@ export const startExample5 = () =>
   Effect.gen(function* () {
     const basicProfile = yield* CaptureBasicProfileDialog.inject().pipe(
       Effect.flatMap(({ deferred }) => Deferred.await(deferred)),
-      Effect.scoped
+      Effect.scoped,
     );
 
     yield* waitForSomeApiCallFlow(basicProfile);
@@ -88,7 +88,7 @@ export const startExample5 = () =>
       Effect.flatMap(({ deferred }) => Deferred.await(deferred)),
       Effect.timeout(Duration.seconds(2)),
       Effect.ignore,
-      Effect.scoped
+      Effect.scoped,
     );
 
     return basicProfile;
