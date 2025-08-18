@@ -23,7 +23,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@injectio/react": [
-        "../../packages/injectio-react/src"
+        "../../packages/react/src"
       ],
       "@/*": [
         "./src/*"

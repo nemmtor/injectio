@@ -3,7 +3,7 @@
   "extends": "./tsconfig.base.json",
   "references": [
     {
-      "path": "packages/injectio-react"
+      "path": "packages/react"
     }
   ]
 }

@@ -14,13 +14,9 @@ import { startExample4 } from './examples/04';
 import { startExample5 } from './examples/05';
 import { startExample6 } from './examples/06';
 import { createUserAtom } from './examples/07';
-import { useSelectedUser } from './examples/08';
 
 export const App = () => {
   const [createdUser, startExample7] = useAtom(createUserAtom);
-  const selectedUser = useSelectedUser();
-
-  console.log({ selectedUser });
 
   return (
     <div className="min-h-screen flex items-center justify-center">

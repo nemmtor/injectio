@@ -11,7 +11,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@injectio/react': fileURLToPath(
-        new URL('../../packages/injectio-react/src', import.meta.url),
+        new URL('../../packages/react/src', import.meta.url),
       ),
     },
   },
