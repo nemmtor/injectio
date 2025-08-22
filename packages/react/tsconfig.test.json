@@ -8,8 +8,10 @@
     }
   ],
   "compilerOptions": {
+    "jsx": "react-jsx",
     "tsBuildInfoFile": ".tsbuildinfo/test.tsbuildinfo",
     "rootDir": "test",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["@testing-library/jest-dom"]
   }
 }

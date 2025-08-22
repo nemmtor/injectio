@@ -1,12 +1,12 @@
-import { memo, useSyncExternalStore } from 'react';
+import * as React from 'react';
 import type { Injected } from './injected.js';
 
 type Props = {
   item: Injected<unknown, unknown, unknown>;
 };
 
-export const InjectedComponent = memo(({ item }: Props) => {
-  const props = useSyncExternalStore(item.subscribe, item.getProps);
+export const InjectedComponent = React.memo(({ item }: Props) => {
+  const props = React.useSyncExternalStore(item.observe, item.getProps);
 
   return item.renderFn({
     props: props,

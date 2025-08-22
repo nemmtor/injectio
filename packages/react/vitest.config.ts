@@ -1,11 +1,13 @@
+import path from 'node:path';
 import { mergeConfig, type ViteUserConfig } from 'vitest/config';
 import shared from '../../vitest.shared.js';
 
 const config: ViteUserConfig = {
   test: {
-    coverage: {
-      reporter: ['html'],
-    },
+    environment: 'jsdom',
+    setupFiles: [path.join(__dirname, 'vitest.setup.ts')],
+    include: ['test/**/*.test.tsx'],
+    exclude: ['src/index.ts', '**/index.ts'],
   },
 };
 
