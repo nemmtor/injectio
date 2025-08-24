@@ -1,11 +1,11 @@
 export type Observer = VoidFunction;
 
 export class Observable {
-  protected observers: Observer[] = [];
+  private observers: Observer[] = [];
 
   public emit() {
-    for (const subscriber of this.observers) {
-      subscriber();
+    for (const observer of this.observers) {
+      observer();
     }
   }
 

@@ -3,19 +3,19 @@ type WithId = {
 };
 
 export class Store<Item extends WithId> {
-  private items: Item[] = [];
+  private _items: Item[] = [];
 
   public add(item: Item) {
     // reference update is needed in order to re-render React
-    this.items = [...this.items, item];
+    this._items = [...this._items, item];
   }
 
   public remove(id: string) {
     // reference update is needed in order to re-render React
-    this.items = this.items.filter((item) => item.id !== id);
+    this._items = this._items.filter((item) => item.id !== id);
   }
 
-  public getSnapshot(): readonly Item[] {
-    return this.items;
+  public get items(): readonly Item[] {
+    return this._items;
   }
 }
