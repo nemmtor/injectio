@@ -6,7 +6,8 @@ import { Toaster } from '@/components/ui/sonner';
 
 import './styles.css';
 import { RegistryProvider } from '@effect-atom/atom-react';
-import { App } from './app';
+import { Example } from './app2';
+import { ThemeProvider } from './components/theme-provider';
 
 const root = document.getElementById('root');
 if (!root) {
@@ -16,9 +17,11 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <RegistryProvider>
-      <App />
-      <Injectio />
-      <Toaster richColors />
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Example />
+        <Injectio />
+        <Toaster richColors />
+      </ThemeProvider>
     </RegistryProvider>
   </StrictMode>,
 );
