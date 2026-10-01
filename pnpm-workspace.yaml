@@ -1,7 +1,8 @@
 packages:
   - packages/*
   - examples/*
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
-  - msgpackr-extract
+
+allowBuilds:
+  "@tailwindcss/oxide": true
+  esbuild: true
+  msgpackr-extract: false
