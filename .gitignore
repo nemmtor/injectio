@@ -28,3 +28,20 @@ dist-ssr
 
 coverage/
 
+.turbo
+
+# vendor
+/vendor/*/
+
+# nix
+.corepack
+.direnv
+
+# playwright
+playwright-report
+test-results
+
+# local env files
+.env*
+!.env.example
+!.envrc
