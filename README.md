@@ -1,5 +1,7 @@
 ![Injectio header](https://github.com/nemmtor/injectio/raw/main/media/header.png)
+
 # Summon React components on demand.
+
 Injectio transforms React components into effect's.
 Injected components can also return value to the calling code.
 Perfect for showing modals, forms, and dialogs programmatically.
@@ -10,6 +12,9 @@ Built with [Effect](https://effect.website/).
 Inspired by [Nice Modal](https://www.npmjs.com/package/@ebay/nice-modal-react).
 
 ## Setup
+
+Injectio requires `react` 18 or 19 and `effect` 4. It is ESM only.
+
 Install Injectio using your preferred package manager:
 
 > [!NOTE]
@@ -22,8 +27,9 @@ pnpm add @injectio/react
 ```
 
 Add the `<Injectio />` component to your app root, typically as one of the last elements:
+
 ```tsx
-import { Injectio } from '@injectio/react';
+import { Injectio } from "@injectio/react";
 
 createRoot(root).render(
   <StrictMode>
@@ -36,7 +42,9 @@ createRoot(root).render(
 Think of `<Injectio />` as a React Portal that renders your injected components.
 
 ## Basic usage
+
 Given any component:
+
 ```tsx
 export const SomeDialog = () => {
   return <Dialog open>...</Dialog>;
@@ -44,6 +52,7 @@ export const SomeDialog = () => {
 ```
 
 You can make it injectable by wrapping it with the `inject` function:
+
 ```tsx
 import { inject } from '@injectio/react';
 
@@ -54,18 +63,21 @@ const injectSomeDialog = () => inject<...>({
 ```
 
 You've now received ability to render this component programatically by executing returned effect via Effect runtime.
+
 ```tsx
 injectSomeDialog.pipe(...)
 ```
 
 ### Understanding Component Lifecycle
+
 Injected component stays mounted for as long as it's [scope](https://effect.website/docs/resource-management/scope/) lives.
 
 Here are some examples:
 
 ✅ **Correct usage** - Wait for the component to complete before closing the scope:
+
 ```tsx
-import { Deferred, Effect } from 'effect';
+import { Deferred, Effect } from "effect";
 
 injectSomeDialog().pipe(
   Effect.flatMap(({ deferred }) => Deferred.await(deferred)),
@@ -75,8 +87,9 @@ injectSomeDialog().pipe(
 ```
 
 ✅ **Correct usage** - Show the component for 5 seconds, then remove it:
+
 ```tsx
-import { Duration, Effect } from 'effect';
+import { Duration, Effect } from "effect";
 
 injectSomeDialog().pipe(
   Effect.tap(Effect.sleep(Duration.seconds(5))),
@@ -86,17 +99,19 @@ injectSomeDialog().pipe(
 ```
 
 ✅ **Correct usage** - Component stays visible while waiting for parent effect to finish:
+
 ```tsx
-Effect.gen(function*(){
+Effect.gen(function* () {
   yield* injectSomeDialog();
-  const someService = yield* SomeService
-  yield* userService.foo
-}).pipe(Effect.scoped)
+  const someService = yield* SomeService;
+  yield* userService.foo;
+}).pipe(Effect.scoped);
 ```
 
 ❌ **Wrong usage** - The scope closes immediately, so the component disappears right away:
+
 ```tsx
-import { Effect } from 'effect';
+import { Effect } from "effect";
 
 injectSomeDialog().pipe(Effect.scoped, Effect.runPromise);
 ```
@@ -190,7 +205,7 @@ You can also fail the deferred, which gets transformed into Effect's error chann
 
 ```tsx
 class ProfileFormCancelledError extends Data.TaggedError(
-  'ProfileFormCancelledError',
+  "ProfileFormCancelledError",
 ) {}
 
 const injectProfileFormDialog = () =>
@@ -222,6 +237,7 @@ injectProfileFormDialog().pipe(
 ```
 
 ## Controlling Props
+
 Injectio provides a way to control props of your injected components. The `P` generic type defines the type of props you want to control programmatically. Pass these props as `initialProps` and access them from the `renderFn`:
 
 ```tsx
@@ -241,6 +257,7 @@ const injectSomeDialog = () =>
 > Currently, the default type of `P` is `Record<string, never>` which means you need to pass an empty object even if you don't want to inject any props. This might change in future versions to make `initialProps` optional.
 
 You can update these props by calling the `updateProps` function that is returned from the inject function:
+
 ```tsx
 injectSomeDialog().pipe(
   Effect.tap(Effect.sleep(Duration.seconds(2))),
@@ -254,6 +271,7 @@ injectSomeDialog().pipe(
 ```
 
 You can access the same `updateProps` function directly from `renderFn`:
+
 ```tsx
 type InjectedProps = {
   opened: boolean;
@@ -269,25 +287,30 @@ const injectSomeDialog = () =>
   });
 ```
 
-## Usage with @effect-atom
+## Usage with @effect/atom-react
+
 Injecting components can be yielded inside other effects which makes it
-easy to integrate with other effect libraries like `@effect-atom`:
+easy to integrate with other effect libraries like `@effect/atom-react`:
+
 ```tsx
-import { Atom, useAtomValue } from '@effect-atom/atom-react';
-import { inject } from '@injectio/react';
-import { Deferred, Effect } from 'effect';
+import { useAtomValue } from "@effect/atom-react";
+import { inject } from "@injectio/react";
+import { Context, Deferred, Effect, Layer } from "effect";
+import { Atom } from "effect/reactivity";
 
-class Users extends Effect.Service<Users>()('app/Users', {
-  succeed: {
+class Users extends Context.Service<Users>()("app/Users", {
+  make: Effect.succeed({
     getAll: Effect.succeed([
-      { id: '1', name: 'Alice' },
-      { id: '2', name: 'Bob' },
-      { id: '3', name: 'Charlie' },
+      { id: "1", name: "Alice" },
+      { id: "2", name: "Bob" },
+      { id: "3", name: "Charlie" },
     ]),
-  },
-}) {}
+  }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}
 
-const runtimeAtom = Atom.runtime(Users.Default);
+const runtimeAtom = Atom.runtime(Users.layer);
 
 const selectedUserAtom = runtimeAtom.atom(
   Effect.gen(function* () {
@@ -315,11 +338,13 @@ export const useSelectedUser = () => {
 ```
 
 ## Recipes
+
 Here are some useful examples you can use with Injectio.
 
 ### Unmount animation
 
 Add a finalizer that updates the prop controlling the `open` state and waits for the animation to complete:
+
 ```tsx
 const SomeDialog = () => {...};
 
@@ -344,13 +369,14 @@ const injectSomeDialog = () =>
 ```
 
 ### Show component while some other effect is executing
+
 You can inject components, change their props and execute different effects concurrently
 by using [Effect's concurrency](https://effect.website/docs/concurrency/basic-concurrency/).
 
 ```tsx
 Effect.gen(function* () {
   const injectedComponent = yield* inject(...);
-  const apiCallFiber = yield* Effect.fork(someApiCall);
+  const apiCallFiber = yield* Effect.forkChild(someApiCall);
   const apiResult = Fiber.join(apiCallFiber); // not yielded yet to not block code execution
 
   const slowPath = Effect.void.pipe(
