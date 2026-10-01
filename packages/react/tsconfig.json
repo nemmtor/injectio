@@ -1,12 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
-  "references": [
-    {
-      "path": "tsconfig.src.json"
-    },
-    {
-      "path": "tsconfig.test.json"
-    }
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "target": "ES2024"
+  },
+  "include": [
+    "src",
+    "test",
+    "tsdown.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts"
   ]
 }

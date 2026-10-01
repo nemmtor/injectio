@@ -1,0 +1,30 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["tsconfig.base.json"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "outputLogs": "new-only",
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+    },
+    "coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+    },
+    "check-types": {
+      "dependsOn": ["^build"],
+    },
+    "clean": {
+      "cache": false,
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+    },
+  },
+}

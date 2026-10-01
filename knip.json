@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreDependencies": ["@effect/language-service"],
+  "workspaces": {
+    "examples/react": {
+      "ignore": ["src/components/ui/**"],
+      "ignoreDependencies": [
+        "@hookform/resolvers",
+        "framer-motion",
+        "globals",
+        "vaul"
+      ]
+    }
+  }
+}

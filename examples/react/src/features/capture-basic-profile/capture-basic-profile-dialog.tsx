@@ -1,8 +1,8 @@
-import { inject } from '@injectio/react';
-import { Data, Deferred, Duration, Effect } from 'effect';
-import { addFinalizer } from 'effect/Effect';
-import { useCallback, useId } from 'react';
-import { Button } from '@/components/ui/button';
+import { inject } from "@injectio/react";
+import { Data, Deferred, Duration, Effect } from "effect";
+
+import { useCallback, useId } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,8 +11,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { type BasicProfile, BasicProfileForm } from './basic-profile-form';
+} from "@/components/ui/dialog";
+import { type BasicProfile, BasicProfileForm } from "./basic-profile-form";
 
 type Props = {
   onCancel: VoidFunction;
@@ -29,8 +29,8 @@ export const CaptureBasicProfileDialog = ({
 }: Props) => {
   const id = useId();
   const handleOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
+    (isOpen: boolean) => {
+      if (!isOpen) {
         onCancel();
       }
     },
@@ -61,14 +61,14 @@ export const CaptureBasicProfileDialog = ({
 };
 
 class CaptureBasicProfileCancelledError extends Data.TaggedError(
-  'CaptureBasicProfileCancelledError',
+  "CaptureBasicProfileCancelledError",
 ) {}
 
 type InjectArgs = {
   profile?: BasicProfile;
 };
 
-type InjectedProps = Pick<Props, 'open'>;
+type InjectedProps = Pick<Props, "open">;
 
 CaptureBasicProfileDialog.inject = ({ profile }: InjectArgs = {}) =>
   Effect.gen(function* () {
@@ -100,7 +100,7 @@ CaptureBasicProfileDialog.inject = ({ profile }: InjectArgs = {}) =>
       },
     });
 
-    yield* addFinalizer(() => {
+    yield* Effect.addFinalizer(() => {
       result.updateProps({ open: false });
       return Effect.sleep(Duration.millis(150));
     });

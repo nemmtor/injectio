@@ -1,0 +1,34 @@
+pre-commit:
+  commands:
+    branch-name:
+      run: |
+        branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+        echo "$branch" | grep -qE '^(main|(feat|fix|chore|docs|refactor|perf|test|build|ci)/[a-z0-9._-]+)$' || {
+          echo "Invalid branch name: '$branch'"
+          echo "Expected: <type>/<kebab-case>, e.g. feat/user-auth"
+          echo "Types: feat fix chore docs refactor perf test build ci"
+          exit 1
+        }
+    manypkg:
+      glob: "{**/,}{package.json,pnpm-workspace.yaml}"
+      run: pnpm exec manypkg check
+    format:
+      glob: "*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,css,md,yaml,yml}"
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    lint:
+      glob: "*.{js,jsx,ts,tsx,mjs,cjs}"
+      run: pnpm exec oxlint -c .oxlintrc.json --import-plugin --type-aware {staged_files}
+
+commit-msg:
+  commands:
+    conventional:
+      run: |
+        header=$(head -n1 {1})
+        echo "$header" | grep -qE '^(Merge|Revert|fixup!|squash!)' && exit 0
+        echo "$header" | grep -qE '^(feat|fix|chore|docs|style|refactor|perf|test|build|ci)(\([a-z0-9._/-]+\))?!?: .{1,72}$' || {
+          echo "Invalid commit message: '$header'"
+          echo "Expected: <type>(<scope>)?: <subject> (max 72 chars)"
+          echo "Types: feat fix chore docs style refactor perf test build ci"
+          exit 1
+        }

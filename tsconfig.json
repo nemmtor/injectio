@@ -1,9 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.base.json",
-  "references": [
-    {
-      "path": "packages/react"
-    }
-  ]
+  "$schema": "https://www.schemastore.org/tsconfig.json",
+  "files": [],
+  "references": [{ "path": "packages/react" }, { "path": "examples/react" }]
 }

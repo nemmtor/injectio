@@ -1,6 +1,6 @@
-import { Deferred, Effect } from 'effect';
+import { Deferred, Effect } from "effect";
 
-import { CaptureBasicProfileDialog } from '@/features/capture-basic-profile/capture-basic-profile-dialog';
+import { CaptureBasicProfileDialog } from "@/features/capture-basic-profile/capture-basic-profile-dialog";
 
 export const startExample1 = () =>
   CaptureBasicProfileDialog.inject().pipe(

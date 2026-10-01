@@ -1,17 +1,16 @@
-import { describe, expect, it, vi } from '@effect/vitest';
-import { render } from '@testing-library/react';
-import * as Deferred from 'effect/Deferred';
-import * as Effect from 'effect/Effect';
-import { Injected } from '../../src/internal/injected.js';
-import { InjectedComponent } from '../../src/internal/injected-component.js';
+import { describe, expect, it, vi } from "@effect/vitest";
+import { render } from "@testing-library/react";
+import { Injected } from "../../src/internal/injected";
+import { InjectedComponent } from "../../src/internal/injected-component";
+import { Deferred } from "effect";
 
-describe('InjectedComponent', () => {
-  it('should call renderFn', () => {
-    const spyRenderFn = vi.fn();
+describe("InjectedComponent", () => {
+  it("should call renderFn", () => {
+    const spyRenderFn = vi.fn<() => null>();
     const injected = new Injected<unknown, unknown, unknown>({
       props: { count: 0 },
-      deferred: Effect.runSync(Deferred.make()),
-      id: '1',
+      deferred: Deferred.makeUnsafe(),
+      id: "1",
       renderFn: spyRenderFn,
     });
 
@@ -20,12 +19,12 @@ describe('InjectedComponent', () => {
     expect(spyRenderFn).toHaveBeenCalled();
   });
 
-  it('should call renderFn with injected props', () => {
-    const spyRenderFn = vi.fn();
+  it("should call renderFn with injected props", () => {
+    const spyRenderFn = vi.fn<() => null>();
     const injected = new Injected<unknown, unknown, unknown>({
       props: { count: 0 },
-      deferred: Effect.runSync(Deferred.make()),
-      id: '1',
+      deferred: Deferred.makeUnsafe(),
+      id: "1",
       renderFn: spyRenderFn,
     });
 
@@ -36,13 +35,13 @@ describe('InjectedComponent', () => {
     );
   });
 
-  it('should call renderFn with created deferred', () => {
-    const spyRenderFn = vi.fn();
-    const deferred = Effect.runSync(Deferred.make<unknown, unknown>());
+  it("should call renderFn with created deferred", () => {
+    const spyRenderFn = vi.fn<() => null>();
+    const deferred = Deferred.makeUnsafe<unknown, unknown>();
     const injected = new Injected<unknown, unknown, unknown>({
       props: { count: 0 },
       deferred,
-      id: '1',
+      id: "1",
       renderFn: spyRenderFn,
     });
 

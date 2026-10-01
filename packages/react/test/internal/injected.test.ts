@@ -1,17 +1,16 @@
-import { describe, expect, it, vi } from '@effect/vitest';
-import * as Deferred from 'effect/Deferred';
-import * as Effect from 'effect/Effect';
-import { Injected } from '../../src/internal/injected.js';
+import { describe, expect, it, vi } from "@effect/vitest";
+import { Injected } from "../../src/internal/injected";
+import { Deferred } from "effect";
 
-describe('Injected', () => {
-  it('should notify registered observers after updating props', () => {
+describe("Injected", () => {
+  it("should notify registered observers after updating props", () => {
     const injected = new Injected({
       props: { count: 0 },
-      deferred: Effect.runSync(Deferred.make()),
-      id: '1',
-      renderFn: vi.fn(),
+      deferred: Deferred.makeUnsafe(),
+      id: "1",
+      renderFn: vi.fn<() => null>(),
     });
-    const spyObserver = vi.fn();
+    const spyObserver = vi.fn<VoidFunction>();
     injected.observe(spyObserver);
 
     injected.updateProps({ count: 1 });
@@ -19,12 +18,12 @@ describe('Injected', () => {
     expect(spyObserver).toHaveBeenCalled();
   });
 
-  it('should update props reference after updating them', () => {
+  it("should update props reference after updating them", () => {
     const injected = new Injected({
       props: { count: 0 },
-      deferred: Effect.runSync(Deferred.make()),
-      id: '1',
-      renderFn: vi.fn(),
+      deferred: Deferred.makeUnsafe(),
+      id: "1",
+      renderFn: vi.fn<() => null>(),
     });
 
     const propsBefore = injected.getProps();

@@ -1,14 +1,14 @@
-import path from 'node:path';
-import { mergeConfig, type ViteUserConfig } from 'vitest/config';
-import shared from '../../vitest.shared.js';
+import { defineConfig } from "vitest/config";
 
-const config: ViteUserConfig = {
+export default defineConfig({
   test: {
-    environment: 'jsdom',
-    setupFiles: [path.join(__dirname, 'vitest.setup.ts')],
-    include: ['test/**/*.test.tsx'],
-    exclude: ['src/index.ts', '**/index.ts'],
+    coverage: {
+      include: ["src"],
+      exclude: ["src/index.ts"],
+    },
+    environment: "jsdom",
+    include: ["test/**/*.test.{ts,tsx}"],
+    setupFiles: ["./vitest.setup.ts"],
+    watch: false,
   },
-};
-
-export default mergeConfig(shared, config);
+});

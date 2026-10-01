@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -6,8 +6,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 export type BasicProfile = {
   firstName: string;
@@ -23,15 +23,17 @@ type Props = {
 export const BasicProfileForm = ({ id, profile, onSubmit }: Props) => {
   const form = useForm<BasicProfile>({
     defaultValues: profile ?? {
-      firstName: '',
-      lastName: '',
+      firstName: "",
+      lastName: "",
     },
   });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(event) => {
+          void form.handleSubmit(onSubmit)(event);
+        }}
         id={id}
         className="space-y-4"
       >

@@ -1,16 +1,12 @@
-import * as React from 'react';
-import type { Injected } from './injected.js';
+import * as React from "react";
+import type { InjectedView } from "./injected";
 
 type Props = {
-  item: Injected<unknown, unknown, unknown>;
+  item: InjectedView;
 };
 
 export const InjectedComponent = React.memo(({ item }: Props) => {
-  const props = React.useSyncExternalStore(item.observe, item.getProps);
+  React.useSyncExternalStore(item.observe, item.getProps);
 
-  return item.renderFn({
-    props: props,
-    updateProps: item.updateProps,
-    deferred: item.deferred,
-  });
+  return item.render();
 });

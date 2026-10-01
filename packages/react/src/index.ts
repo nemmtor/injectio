@@ -1,3 +1,3 @@
-export * from './inject.js';
+export * from "./inject";
 
-export * from './injectio.js';
+export * from "./injectio";

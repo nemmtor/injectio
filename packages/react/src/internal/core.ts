@@ -1,9 +1,7 @@
-import * as Deferred from 'effect/Deferred';
-import * as Effect from 'effect/Effect';
-import * as uuid from 'uuid';
-import { Injected, type RenderFn } from './injected.js';
-import { Observable, type Observer } from './observable.js';
-import { Store } from './store.js';
+import { Deferred, Effect } from "effect";
+import { Injected, type InjectedView, type RenderFn } from "./injected";
+import { Observable, type Observer } from "./observable";
+import { Store } from "./store";
 
 export type AddArgs<A, E, P> = {
   renderFn: RenderFn<A, E, P>;
@@ -13,12 +11,9 @@ export type AddArgs<A, E, P> = {
 export class Core {
   private static instance = new Core();
   private readonly observable = new Observable();
-  private readonly store = new Store<Injected<unknown, unknown, unknown>>();
+  private readonly store = new Store<InjectedView>();
 
-  private constructor() {
-    this.getSnapshot = this.getSnapshot.bind(this);
-    this.observe = this.observe.bind(this);
-  }
+  private constructor() {}
 
   public static getInstance(): Core {
     return Core.instance;
@@ -29,13 +24,10 @@ export class Core {
     Core.instance = new Core();
   }
 
-  public observe(observer: Observer) {
-    return this.observable.observe(observer);
-  }
+  public readonly observe = (observer: Observer) =>
+    this.observable.observe(observer);
 
-  public getSnapshot() {
-    return this.store.items;
-  }
+  public readonly getSnapshot = () => this.store.items;
 
   public remove(id: string) {
     this.store.remove(id);
@@ -43,11 +35,13 @@ export class Core {
   }
 
   public add<A, E, P>({ renderFn, initialProps }: AddArgs<A, E, P>) {
-    return Effect.gen(this, function* () {
-      const injectedId = uuid.v4();
-      yield* Effect.addFinalizer(() => {
-        return Effect.sync(() => this.remove(injectedId));
-      });
+    return Effect.gen({ self: this }, function* () {
+      const injectedId = crypto.randomUUID();
+      yield* Effect.addFinalizer(() =>
+        Effect.sync(() => {
+          this.remove(injectedId);
+        }),
+      );
       const deferred = yield* Deferred.make<A, E>();
 
       const injected = new Injected<A, E, P>({
@@ -57,7 +51,7 @@ export class Core {
         props: initialProps,
       });
 
-      this.store.add(injected as Injected<unknown, unknown, unknown>);
+      this.store.add(injected);
       this.observable.emit();
 
       return {

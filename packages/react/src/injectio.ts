@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Core } from './internal/core.js';
-import { InjectedComponent } from './internal/injected-component.js';
+import * as React from "react";
+import { Core } from "./internal/core";
+import { InjectedComponent } from "./internal/injected-component";
 
 export const Injectio = () => {
   const core = Core.getInstance();

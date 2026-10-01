@@ -1,8 +1,8 @@
-import { Deferred, Duration, Effect, Fiber } from 'effect';
-import { ProgressDialog } from '@/components/progress-dialog';
-import type { BasicProfile } from '@/features/capture-basic-profile/basic-profile-form';
-import { CaptureBasicProfileDialog } from '@/features/capture-basic-profile/capture-basic-profile-dialog';
-import { ThanksDialog } from '@/features/thanks-dialog';
+import { Deferred, Duration, Effect, Fiber } from "effect";
+import { ProgressDialog } from "@/components/progress-dialog";
+import type { BasicProfile } from "@/features/capture-basic-profile/basic-profile-form";
+import { CaptureBasicProfileDialog } from "@/features/capture-basic-profile/capture-basic-profile-dialog";
+import { ThanksDialog } from "@/features/thanks-dialog";
 
 const someApiCall = Effect.promise(() => {
   return new Promise<void>((res) => {
@@ -18,7 +18,7 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
       progress: 10,
     });
 
-    const apiCallFiber = yield* Effect.fork(
+    const apiCallFiber = yield* Effect.forkChild(
       someApiCall.pipe(Effect.delay(Duration.seconds(20))),
     );
     const apiResult = Fiber.join(apiCallFiber);
@@ -34,7 +34,7 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
       Effect.tap(() =>
         Effect.sync(() =>
           progressDialog.updateProps({
-            description: 'Nearly there...',
+            description: "Nearly there...",
             progress: 20,
           }),
         ).pipe(Effect.delay(Duration.millis(500))),
@@ -57,7 +57,7 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
         Effect.sync(() =>
           progressDialog.updateProps({
             description:
-              'Please hold on, it should take only few seconds more.',
+              "Please hold on, it should take only few seconds more.",
             progress: 40,
           }),
         ).pipe(Effect.delay(Duration.seconds(2))),
@@ -69,7 +69,7 @@ const waitForSomeApiCallFlow = (basicProfile: BasicProfile) =>
           }),
         ).pipe(Effect.delay(Duration.seconds(3))),
       ),
-      Effect.flatMap(() => apiResult),
+      Effect.andThen(apiResult),
     );
 
     return yield* Effect.raceFirst(apiResult, slowPath);

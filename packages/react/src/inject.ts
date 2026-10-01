@@ -1,4 +1,4 @@
-import { type AddArgs, Core } from './internal/core.js';
+import { type AddArgs, Core } from "./internal/core";
 
 export const inject = <A, E = never, P = Record<string, never>>(
   args: AddArgs<A, E, P>,

@@ -1,88 +1,81 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
-  "author": "nemmtor",
+  "$schema": "https://www.schemastore.org/package.json",
   "name": "@injectio/react",
   "version": "0.0.0",
-  "type": "module",
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
-  },
-  "exports": {
-    "./package.json": "./package.json",
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts",
-    "./internal/*": null
-  },
+  "description": "Summon React components on demand",
+  "keywords": [
+    "declarative",
+    "drawer",
+    "effect",
+    "headless",
+    "inject",
+    "injectio",
+    "modal",
+    "overlay",
+    "portal",
+    "react",
+    "render",
+    "toast",
+    "typescript",
+    "ui",
+    "workflow"
+  ],
+  "homepage": "https://github.com/nemmtor/injectio",
   "bugs": {
     "url": "https://github.com/nemmtor/injectio/issues"
   },
-  "description": "Summon React components on demand",
-  "tags": [
-    "react",
-    "effect",
-    "inject",
-    "injectio",
-    "headless",
-    "modal",
-    "toast",
-    "drawer",
-    "overlay",
-    "portal",
-    "render",
-    "ui",
-    "workflow",
-    "declarative",
-    "typescript"
-  ],
-  "keywords": [
-    "react",
-    "effect",
-    "inject",
-    "injectio",
-    "headless",
-    "modal",
-    "toast",
-    "drawer",
-    "overlay",
-    "portal",
-    "render",
-    "ui",
-    "workflow",
-    "declarative",
-    "typescript"
-  ],
+  "license": "MIT",
+  "author": "nemmtor",
   "repository": {
     "type": "git",
     "url": "https://github.com/nemmtor/injectio.git",
     "directory": "packages/react"
   },
-  "homepage": "https://github.com/nemmtor/injectio",
-  "scripts": {
-    "build": "pnpm build-esm && pnpm build-cjs && pnpm build-annotate && build-utils pack-v5",
-    "build-esm": "tsc -b tsconfig.build.json",
-    "build-cjs": "babel build/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir build/cjs --source-maps",
-    "build-annotate": "babel build --plugins annotate-pure-calls --out-dir build --source-maps",
-    "check": "tsc -b tsconfig.json",
-    "test": "vitest",
-    "coverage": "vitest --coverage"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
-  "dependencies": {
-    "uuid": "^11.1.0"
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "clean": "del-cli dist coverage tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/react": "^19.1.11",
-    "effect": "^3.17.9",
-    "jsdom": "^26.1.0",
-    "react": "^19.1.1"
+    "@effect/vitest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "del-cli": "catalog:",
+    "effect": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
-    "effect": "^3.17.7",
+    "effect": "^4.0.0",
     "react": ">=18 <20"
   }
 }

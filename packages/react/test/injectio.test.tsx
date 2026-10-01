@@ -1,14 +1,11 @@
-import { describe, expect, it } from '@effect/vitest';
-import { Injectio, inject } from '@injectio/react';
-import { render, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import * as Deferred from 'effect/Deferred';
-import * as Effect from 'effect/Effect';
-import * as Exit from 'effect/Exit';
-import * as Scope from 'effect/Scope';
+import { describe, expect, it } from "@effect/vitest";
+import { Injectio, inject } from "@injectio/react";
+import { render, waitFor } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { Deferred, Effect, Exit, Scope } from "effect";
 
-describe('Injectio', () => {
-  it.scoped('should display injected component', () =>
+describe("Injectio", () => {
+  it.effect("should display injected component", () =>
     Effect.gen(function* () {
       const { getByText } = render(<Injectio />);
 
@@ -18,70 +15,70 @@ describe('Injectio', () => {
       });
 
       yield* Effect.promise(() =>
-        waitFor(() => expect(getByText('Hello world')).toBeInTheDocument()),
+        waitFor(() => expect(getByText("Hello world")).toBeInTheDocument()),
       );
     }),
   );
 
-  it.effect('should unmount component when scope gets closed', () =>
+  it.effect("should unmount component when scope gets closed", () =>
     Effect.gen(function* () {
       const { getByText, queryByText } = render(<Injectio />);
       const scope = yield* Scope.make();
       yield* inject({
         renderFn: () => <p>Hello world</p>,
         initialProps: {},
-      }).pipe(Scope.extend(scope));
-      yield* Effect.promise(() => waitFor(() => getByText('Hello world')));
+      }).pipe(Scope.provide(scope));
+      yield* Effect.promise(() => waitFor(() => getByText("Hello world")));
 
       yield* Scope.close(scope, Exit.void);
 
       yield* Effect.promise(() =>
         waitFor(() =>
-          expect(queryByText('Hello world')).not.toBeInTheDocument(),
+          expect(queryByText("Hello world")).not.toBeInTheDocument(),
         ),
       );
     }),
   );
 
-  it.scoped('should apply initial props to the injected component', () =>
+  it.effect("should apply initial props to the injected component", () =>
     Effect.gen(function* () {
       const { getByText } = render(<Injectio />);
 
       yield* inject({
         renderFn: ({ props }) => <p>{props.text}</p>,
         initialProps: {
-          text: 'Hello world',
+          text: "Hello world",
         },
       });
 
       yield* Effect.promise(() =>
-        waitFor(() => expect(getByText('Hello world')).toBeInTheDocument()),
+        waitFor(() => expect(getByText("Hello world")).toBeInTheDocument()),
       );
     }),
   );
 
-  it.scoped(
-    'should allow updating props of injected component from the calling code',
+  it.effect(
+    "should allow updating props of injected component from the calling code",
     () =>
       Effect.gen(function* () {
         const { getByText } = render(<Injectio />);
         const { updateProps } = yield* inject({
           renderFn: ({ props }) => <p>{props.text}</p>,
           initialProps: {
-            text: 'Hello world',
+            text: "Hello world",
           },
         });
 
-        updateProps({ text: 'Changed text' });
+        updateProps({ text: "Changed text" });
 
         yield* Effect.promise(() =>
-          waitFor(() => expect(getByText('Changed text')).toBeInTheDocument()),
+          waitFor(() => expect(getByText("Changed text")).toBeInTheDocument()),
         );
       }),
   );
 
-  it.scoped(
-    'should allow updating props of injected component from itself',
+  it.effect(
+    "should allow updating props of injected component from itself",
     () =>
       Effect.gen(function* () {
         const user = userEvent.setup();
@@ -90,38 +87,40 @@ describe('Injectio', () => {
           renderFn: ({ props, updateProps }) => (
             <button
               type="button"
-              onClick={() => updateProps({ text: 'Changed text' })}
+              onClick={() => {
+                updateProps({ text: "Changed text" });
+              }}
             >
               {props.text}
             </button>
           ),
           initialProps: {
-            text: 'Hello world',
+            text: "Hello world",
           },
         });
         const button = yield* Effect.promise(() =>
-          waitFor(() => getByText('Hello world')),
+          waitFor(() => getByText("Hello world")),
         );
 
         yield* Effect.promise(() => user.click(button));
 
         yield* Effect.promise(() =>
-          waitFor(() => expect(getByText('Changed text')).toBeInTheDocument()),
+          waitFor(() => expect(getByText("Changed text")).toBeInTheDocument()),
         );
       }),
   );
 
-  it.scoped('should communicate returned value via deferred', () =>
+  it.effect("should communicate returned value via deferred", () =>
     Effect.gen(function* () {
       const user = userEvent.setup();
       const { getByText } = render(<Injectio />);
       const { deferred } = yield* inject<string>({
-        renderFn: ({ deferred }) => (
+        renderFn: ({ deferred: injectedDeferred }) => (
           <button
             type="button"
-            onClick={() =>
-              deferred.pipe(Deferred.succeed('ok'), Effect.runPromise)
-            }
+            onClick={() => {
+              Effect.runSync(Deferred.succeed(injectedDeferred, "ok"));
+            }}
           >
             Hello world
           </button>
@@ -129,17 +128,17 @@ describe('Injectio', () => {
         initialProps: {},
       });
       const button = yield* Effect.promise(() =>
-        waitFor(() => getByText('Hello world')),
+        waitFor(() => getByText("Hello world")),
       );
 
       yield* Effect.promise(() => user.click(button));
       const returnedValue = yield* Deferred.await(deferred);
 
-      expect(returnedValue).toBe('ok');
+      expect(returnedValue).toBe("ok");
     }),
   );
 
-  it.scoped('should have isolated rerenders of injected components', () =>
+  it.effect("should have isolated rerenders of injected components", () =>
     Effect.gen(function* () {
       let firstComponentRenderCount = 0;
       let secondComponentRenderCount = 0;
@@ -159,7 +158,7 @@ describe('Injectio', () => {
           />
         ),
         initialProps: {
-          text: 'First component',
+          text: "First component",
         },
       });
       yield* inject({
@@ -172,16 +171,16 @@ describe('Injectio', () => {
           />
         ),
         initialProps: {
-          text: 'Second component',
+          text: "Second component",
         },
       });
-      yield* Effect.promise(() => waitFor(() => getByText('First component')));
-      yield* Effect.promise(() => waitFor(() => getByText('Second component')));
+      yield* Effect.promise(() => waitFor(() => getByText("First component")));
+      yield* Effect.promise(() => waitFor(() => getByText("Second component")));
 
-      firstComponent.updateProps({ text: 'Changed text' });
-      yield* Effect.promise(() => waitFor(() => getByText('Changed text')));
-      firstComponent.updateProps({ text: 'Another text' });
-      yield* Effect.promise(() => waitFor(() => getByText('Another text')));
+      firstComponent.updateProps({ text: "Changed text" });
+      yield* Effect.promise(() => waitFor(() => getByText("Changed text")));
+      firstComponent.updateProps({ text: "Another text" });
+      yield* Effect.promise(() => waitFor(() => getByText("Another text")));
 
       expect(firstComponentRenderCount).toBe(3);
       expect(secondComponentRenderCount).toBe(1);

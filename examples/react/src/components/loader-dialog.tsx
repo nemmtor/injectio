@@ -1,6 +1,6 @@
-import { inject } from '@injectio/react';
-import { Duration, Effect } from 'effect';
-import { Button } from './ui/button';
+import { inject } from "@injectio/react";
+import { Duration, Effect } from "effect";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Spinner } from './ui/spinner';
+} from "./ui/dialog";
+import { Spinner } from "./ui/spinner";
 
 type Props = {
   open: boolean;
@@ -39,11 +39,11 @@ export const LoaderDialog = ({ open, title, description, onRetry }: Props) => {
   );
 };
 
-type InjectedProps = Pick<Props, 'open' | 'description' | 'onRetry'>;
+type InjectedProps = Pick<Props, "open" | "description" | "onRetry">;
 
-type InjectArgs = Pick<Props, 'title' | 'description' | 'onRetry'>;
+type InjectArgs = Pick<Props, "title" | "description" | "onRetry">;
 
-LoaderDialog.inject = <E = never>({
+LoaderDialog.inject = <E = never,>({
   title,
   description,
   onRetry,

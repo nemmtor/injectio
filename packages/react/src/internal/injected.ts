@@ -1,6 +1,6 @@
-import type * as Deferred from 'effect/Deferred';
-import type * as React from 'react';
-import { Observable, type Observer } from './observable.js';
+import type { Deferred } from "effect";
+import type * as React from "react";
+import { Observable, type Observer } from "./observable";
 
 type RenderFnProps<A, E, P> = {
   deferred: Deferred.Deferred<A, E>;
@@ -12,6 +12,13 @@ export type RenderFn<A, E, P> = (
   props: RenderFnProps<A, E, P>,
 ) => React.ReactNode;
 
+export type InjectedView = {
+  readonly id: string;
+  observe: (observer: Observer) => VoidFunction;
+  getProps: () => unknown;
+  render: () => React.ReactNode;
+};
+
 type ConstructorArgs<A, E, P> = {
   id: string;
   props: P;
@@ -19,7 +26,7 @@ type ConstructorArgs<A, E, P> = {
   deferred: Deferred.Deferred<A, E>;
 };
 
-export class Injected<A, E, P> {
+export class Injected<A, E, P> implements InjectedView {
   private readonly observable = new Observable();
 
   public readonly id: string;
@@ -32,21 +39,22 @@ export class Injected<A, E, P> {
     this.renderFn = renderFn;
     this.deferred = deferred;
     this.props = props;
-    this.updateProps = this.updateProps.bind(this);
-    this.getProps = this.getProps.bind(this);
-    this.observe = this.observe.bind(this);
   }
 
-  public updateProps(props: Partial<P>) {
+  public readonly updateProps = (props: Partial<P>) => {
     this.props = { ...this.props, ...props };
     this.observable.emit();
-  }
+  };
 
-  public observe(observer: Observer) {
-    return this.observable.observe(observer);
-  }
+  public readonly observe = (observer: Observer) =>
+    this.observable.observe(observer);
 
-  public getProps() {
-    return this.props;
-  }
+  public readonly getProps = () => this.props;
+
+  public readonly render = () =>
+    this.renderFn({
+      props: this.props,
+      updateProps: this.updateProps,
+      deferred: this.deferred,
+    });
 }

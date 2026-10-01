@@ -1,19 +1,19 @@
-import { useAtom } from '@effect-atom/atom-react';
-import { Button } from './components/ui/button';
+import { useAtom } from "@effect/atom-react";
+import { Button } from "./components/ui/button";
 import {
   Card,
   CardAction,
   CardDescription,
   CardHeader,
   CardTitle,
-} from './components/ui/card';
-import { startExample1 } from './examples/01';
-import { startExample2 } from './examples/02';
-import { startExample3 } from './examples/03';
-import { startExample4 } from './examples/04';
-import { startExample5 } from './examples/05';
-import { startExample6 } from './examples/06';
-import { createUserAtom } from './examples/07';
+} from "./components/ui/card";
+import { startExample1 } from "./examples/01";
+import { startExample2 } from "./examples/02";
+import { startExample3 } from "./examples/03";
+import { startExample4 } from "./examples/04";
+import { startExample5 } from "./examples/05";
+import { startExample6 } from "./examples/06";
+import { createUserAtom } from "./examples/07";
 
 export const App = () => {
   const [createdUser, startExample7] = useAtom(createUserAtom);
@@ -53,8 +53,8 @@ export const App = () => {
         />
         <ExampleCard
           title="Example #7"
-          description={`With @effect-atom\n${JSON.stringify(createdUser, null, 4)}`}
-          onStartClick={() => startExample7('John')}
+          description={`With @effect/atom-react\n${JSON.stringify(createdUser, null, 4)}`}
+          onStartClick={() => startExample7("John")}
         />
       </div>
     </div>
@@ -64,7 +64,7 @@ export const App = () => {
 const ExampleCard = (props: {
   title: string;
   description: string;
-  onStartClick: VoidFunction;
+  onStartClick: () => unknown;
 }) => (
   <Card className="w-full max-w-sm">
     <CardHeader>
@@ -73,7 +73,12 @@ const ExampleCard = (props: {
         {props.description}
       </CardDescription>
       <CardAction>
-        <Button variant="ghost" onClick={props.onStartClick}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            void props.onStartClick();
+          }}
+        >
           Start
         </Button>
       </CardAction>

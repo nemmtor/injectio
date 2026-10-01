@@ -1,9 +1,9 @@
-import { Data, Deferred, Duration, Effect, Fiber, Ref } from 'effect';
-import { toast } from 'sonner';
-import { ProgressDialog } from '@/components/progress-dialog';
-import type { BasicProfile } from '@/features/capture-basic-profile/basic-profile-form';
-import { CaptureBasicProfileDialog } from '@/features/capture-basic-profile/capture-basic-profile-dialog';
-import { ThanksDialog } from '@/features/thanks-dialog';
+import { Data, Deferred, Duration, Effect, Fiber, Ref } from "effect";
+import { toast } from "sonner";
+import { ProgressDialog } from "@/components/progress-dialog";
+import type { BasicProfile } from "@/features/capture-basic-profile/basic-profile-form";
+import { CaptureBasicProfileDialog } from "@/features/capture-basic-profile/capture-basic-profile-dialog";
+import { ThanksDialog } from "@/features/thanks-dialog";
 
 const someApiCall = Effect.promise(() => {
   return new Promise<void>((res) => {
@@ -12,7 +12,7 @@ const someApiCall = Effect.promise(() => {
 });
 
 const MAX_ATTEMPTS = 3;
-class RetryError extends Data.TaggedError('RetryError') {}
+class RetryError extends Data.TaggedError("RetryError") {}
 
 const waitForSomeApiCallFlow = (
   basicProfile: BasicProfile,
@@ -29,12 +29,12 @@ const waitForSomeApiCallFlow = (
       progress: 10,
     });
 
-    const apiCallFiber = yield* Effect.fork(
+    const apiCallFiber = yield* Effect.forkChild(
       someApiCall.pipe(Effect.delay(Duration.seconds(100))),
     );
     const apiResult = Fiber.join(apiCallFiber).pipe(
       (v) => v,
-      Effect.catchAllCause(() => {
+      Effect.catchCause(() => {
         return Effect.fail(new RetryError());
       }),
     );
@@ -50,7 +50,7 @@ const waitForSomeApiCallFlow = (
       Effect.tap(() =>
         Effect.sync(() =>
           progressDialog.updateProps({
-            description: 'Nearly there...',
+            description: "Nearly there...",
             progress: 20,
           }),
         ).pipe(Effect.delay(Duration.millis(500))),
@@ -73,7 +73,7 @@ const waitForSomeApiCallFlow = (
         Effect.sync(() =>
           progressDialog.updateProps({
             description:
-              'Please hold on, it should take only few seconds more.',
+              "Please hold on, it should take only few seconds more.",
             progress: 40,
           }),
         ).pipe(Effect.delay(Duration.seconds(2))),
@@ -87,20 +87,18 @@ const waitForSomeApiCallFlow = (
       ),
 
       Effect.flatMap(() =>
-        Effect.if(canRetry, {
-          onFalse: () => Effect.fail(new RetryError()),
-          onTrue: () =>
-            Effect.sync(() => {
+        canRetry
+          ? Effect.sync(() => {
               progressDialog.updateProps({
-                description: 'Something might be wrong, please retry.',
+                description: "Something might be wrong, please retry.",
                 onRetry: () => {
-                  Effect.runPromise(Fiber.interrupt(apiCallFiber));
+                  void Effect.runPromise(Fiber.interrupt(apiCallFiber));
                 },
               });
-            }),
-        }),
+            })
+          : Effect.fail(new RetryError()),
       ),
-      Effect.flatMap(() => apiResult),
+      Effect.andThen(apiResult),
     );
 
     return yield* Effect.raceFirst(apiResult, slowPath);
@@ -110,8 +108,8 @@ const waitForSomeApiCallFlow = (
       times: MAX_ATTEMPTS - 1,
       while: (e) => e instanceof RetryError,
     }),
-    Effect.tapErrorTag('RetryError', () =>
-      Effect.sync(() => toast.error('Sorry, try again later.')),
+    Effect.tapErrorTag("RetryError", () =>
+      Effect.sync(() => toast.error("Sorry, try again later.")),
     ),
   );
 
